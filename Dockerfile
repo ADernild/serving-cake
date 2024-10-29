@@ -1,11 +1,11 @@
 # Stage 1: Build the application
-FROM rust:1.79 AS builder
+FROM rust:1.82 AS builder
 
 # Set the working directory
 WORKDIR /api
 
 # Copy over your manifests
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 
 # Copy over your source files
 COPY src ./src
