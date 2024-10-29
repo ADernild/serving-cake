@@ -1,6 +1,8 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::http::header;
+use actix_web::{dev::ServiceRequest, web, App, Error, HttpResponse, HttpServer, Responder};
 use rand::seq::SliceRandom;
 use serde::Serialize;
+use std::env;
 use std::sync::Mutex;
 
 // Structure for the response
@@ -15,6 +17,17 @@ struct CakeResponse {
 // Structure to hold the state
 struct AppState {
     cake_slices: Mutex<i32>,
+    auth_token: String,
+}
+
+// Function to check authorization
+fn check_auth(req: &ServiceRequest, data: &web::Data<AppState>) -> Result<(), Error> {
+    if let Some(auth_header) = req.headers().get(header::AUTHORIZATION) {
+        if auth_header.to_str().unwrap_or_default() == data.auth_token {
+            return Ok(());
+        }
+    }
+    Err(actix_web::error::ErrorUnauthorized("Invalid authorization"))
 }
 
 // Function to get random surprise message with 50% chance
@@ -40,7 +53,13 @@ fn get_random_surprise() -> Option<String> {
 }
 
 // Handler for the POST request
-async fn get_cake(data: web::Data<AppState>) -> impl Responder {
+async fn get_cake(req: actix_web::HttpRequest, data: web::Data<AppState>) -> impl Responder {
+    if check_auth(&ServiceRequest::from_request(req), &data).is_err() {
+        return HttpResponse::Unauthorized().json(serde_json::json!({
+            "error": "Unauthorized access"
+        }));
+    }
+
     let mut slices = data.cake_slices.lock().unwrap();
     let surprise = get_random_surprise();
 
@@ -65,9 +84,12 @@ async fn get_cake(data: web::Data<AppState>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Initialize the app state with 10 slices of cake
+    let auth_token = env::var("AUTH_TOKEN").unwrap_or_default();
+
+    // Initialize the app state with 42 slices of cake and auth header
     let app_state = web::Data::new(AppState {
         cake_slices: Mutex::new(42),
+        auth_token,
     });
 
     HttpServer::new(move || {
