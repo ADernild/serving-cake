@@ -95,7 +95,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(app_state.clone())
-            .route("/cake", web::post().to(get_cake))
+            .route("/slice", web::post().to(get_cake))
     })
     .bind("0.0.0.0:8080")?
     .run()
