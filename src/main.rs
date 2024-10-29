@@ -67,7 +67,7 @@ async fn get_cake(req: actix_web::HttpRequest, data: web::Data<AppState>) -> imp
         // Decrease the number of slices
         *slices -= 1;
         CakeResponse {
-            message: "Here you are, enjoy this slice of cake!".to_string(),
+            message: "Here you are, enjoy this slice of cake 🎂!".to_string(),
             surprise,
             slices_left: *slices,
         }
