@@ -1,17 +1,40 @@
 use actix_web::{dev::ServiceRequest, web, HttpRequest, HttpResponse, Responder};
 use rusqlite::Connection;
+use std::net::IpAddr;
 use std::sync::Mutex;
 use uuid::Uuid;
 
-use crate::{models::CakeResponse, auth::check_auth, utils::get_random_surprise, db::take_slice, db::get_slices_left, db::fetch_cake_by_uid};
+use crate::{
+    models::CakeResponse,
+    auth::check_auth,
+    utils::get_random_surprise,
+    db::{take_slice, get_slices_left, fetch_cake_by_uid},
+    rate_limiter::RateLimiter
+};
+
+pub async fn get_cake(
+    req: HttpRequest,
+    conn: web::Data<Mutex<Connection>>,
+    auth_token: web::Data<String>,
+    rate_limiter: web::Data<RateLimiter>,
+) -> impl Responder {
 
 
-pub async fn get_cake(req: HttpRequest, conn: web::Data<Mutex<Connection>>, auth_token: web::Data<String>,) -> impl Responder {
+
+    let ip = req.peer_addr().map(|s| s.ip()).unwrap_or_else(|| IpAddr::from([127, 0, 0, 1]));
+
+    if let Err(msg) = rate_limiter.check(ip) {
+        return HttpResponse::TooManyRequests().json(serde_json::json!({
+            "error": msg
+        }));
+    }
+
     if check_auth(&ServiceRequest::from_request(req), &auth_token).is_err() {
         return HttpResponse::Unauthorized().json(serde_json::json!({
             "error": "Unauthorized access"
         }));
     }
+
     let conn = conn.lock().unwrap();
     let surprise = get_random_surprise();
     let slices_left = get_slices_left(&conn).unwrap_or(0);
