@@ -22,7 +22,7 @@ async fn main() -> std::io::Result<()> {
             .route("/slice", web::post().to(handlers::get_cake))
             .route("/slice/{uid}", web::get().to(handlers::get_cake_by_uid))
     })
-    .bind("0.0.0.0:8081")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }

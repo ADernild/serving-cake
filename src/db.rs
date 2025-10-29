@@ -1,7 +1,9 @@
 use rusqlite::{Connection, Result};
+use std::env;
 
 pub fn init_db() -> Result<Connection> {
-    let conn = Connection::open("cake.db")?;
+    let db_path = env::var("DB_PATH").unwrap_or_else(|_| "cake.db".to_string());
+    let conn = Connection::open(db_path)?;
     conn.execute(
         "CREATE TABLE IF NOT EXISTS cake_slices (
             id TEXT PRIMARY KEY,
