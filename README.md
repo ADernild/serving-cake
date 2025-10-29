@@ -12,5 +12,8 @@ Or run it with Docker:
 ```bash
 docker run adernild/serving-cake:latest \
     -p 8080:8080 \
-    -e AUTH_TOKEN=<SECRET TOKEN>
+    -e AUTH_TOKEN=<SECRET TOKEN> \
+    -e DB_PATH=/app/data \
+    -v ./data:/app/data
+
 ```
