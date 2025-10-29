@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM rust:1.82 AS builder
+FROM rust:1.90 AS builder
 
 # Set the working directory
 WORKDIR /api
