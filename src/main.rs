@@ -20,6 +20,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(conn.clone())
             .app_data(auth_token.clone())
             .route("/slice", web::post().to(handlers::get_cake))
+            .route("/slice/{uid}", web::get().to(handlers::get_cake_by_uid))
     })
     .bind("0.0.0.0:8081")?
     .run()

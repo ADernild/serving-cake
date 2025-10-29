@@ -3,6 +3,8 @@ use serde::Serialize;
 // Structure for the response
 #[derive(Serialize)]
 pub struct CakeResponse {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub uid: Option<String>,
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub surprise: Option<String>,
