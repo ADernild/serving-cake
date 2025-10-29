@@ -1,8 +1,10 @@
 use actix_web::{dev::ServiceRequest, web, HttpRequest, HttpResponse, Responder};
-use std::sync::Mutex;
 use rusqlite::Connection;
+use std::sync::Mutex;
 use uuid::Uuid;
+
 use crate::{models::CakeResponse, auth::check_auth, utils::get_random_surprise, db::take_slice, db::get_slices_left, db::fetch_cake_by_uid};
+
 
 pub async fn get_cake(req: HttpRequest, conn: web::Data<Mutex<Connection>>, auth_token: web::Data<String>,) -> impl Responder {
     if check_auth(&ServiceRequest::from_request(req), &auth_token).is_err() {

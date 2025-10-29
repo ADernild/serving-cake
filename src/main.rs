@@ -1,12 +1,12 @@
 use actix_web::{web, App, HttpServer};
-use std::sync::Mutex;
 use std::env;
+use std::sync::Mutex;
 
+mod auth;
+mod db;
+mod handlers;
 mod models;
 mod utils;
-mod handlers;
-mod db;
-mod auth;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
