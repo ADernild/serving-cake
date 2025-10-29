@@ -19,7 +19,7 @@ impl RateLimiter {
     pub fn check(&self, ip: IpAddr) -> Result<(), String> {
         if let Some(mut entry) = self.requests.get_mut(&ip) {
             if entry.value().elapsed() < self.limit {
-                return Err("Greedy! Wait a minute before asking for more cake! 🍰⏳".to_string());
+                return Err("Greedy! Wait 10 seconds before asking for more cake! 🍰⏳".to_string());
             }
             *entry.value_mut() = Instant::now();
         } else {

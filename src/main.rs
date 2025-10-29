@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
     let conn = web::Data::new(Mutex::new(conn));
     let auth_token = env::var("AUTH_TOKEN").unwrap_or_default();
     let auth_token = web::Data::new(auth_token);
-    let rate_limiter = web::Data::new(rate_limiter::RateLimiter::new(60)); // 60 seconds
+    let rate_limiter = web::Data::new(rate_limiter::RateLimiter::new(10));
 
     HttpServer::new(move || {
         App::new()
