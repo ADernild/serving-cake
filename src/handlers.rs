@@ -19,8 +19,6 @@ pub async fn get_cake(
     rate_limiter: web::Data<RateLimiter>,
 ) -> impl Responder {
 
-
-
     let ip = req.peer_addr().map(|s| s.ip()).unwrap_or_else(|| IpAddr::from([127, 0, 0, 1]));
 
     if let Err(msg) = rate_limiter.check(ip) {
@@ -43,14 +41,14 @@ pub async fn get_cake(
         // Decrease the number of slices
         take_slice(&conn, "Here you are, enjoy this slice of cake 🎂!", surprise.as_deref(), &uid).unwrap();
         CakeResponse {
-            uid: Some(uid),
+            id: Some(uid),
             message: "Here you are, enjoy this slice of cake 🎂!".to_string(),
             surprise,
             slices_left: slices_left - 1,
         }
     } else {
         CakeResponse {
-            uid: None,
+            id: None,
             message: "Unfortunately there is no more cake, have a hug instead 🤗".to_string(),
             surprise: None,
             slices_left: 0,
@@ -71,7 +69,7 @@ pub async fn get_cake_by_uid(
     match fetch_cake_by_uid(&conn, &uid) {
         Ok((uid, message, surprise, slices_left)) => {
             let response = CakeResponse {
-                uid: Some(uid),
+                id: Some(uid),
                 message,
                 surprise,
                 slices_left,
