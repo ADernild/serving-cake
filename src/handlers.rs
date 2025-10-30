@@ -64,8 +64,6 @@ pub async fn get_cake_by_uid(
     conn: web::Data<Mutex<Connection>>,
     uid: web::Path<String>,
 ) -> impl Responder {
-    // Check authentication
-
     // Lock the database connection
     let conn = conn.lock().unwrap();
 
