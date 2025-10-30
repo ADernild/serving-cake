@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM rust:1.90 AS builder
+FROM rust:1.90-slim-bullseye AS builder
 
 WORKDIR /api
 
@@ -10,7 +10,7 @@ COPY src ./src
 RUN cargo build --release
 
 # Stage 2: Create the runtime image
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
 
 RUN apt-get update && \
     apt-get install -y ca-certificates && \
