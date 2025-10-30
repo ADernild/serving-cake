@@ -60,17 +60,11 @@ pub async fn get_cake(
 }
 
 pub async fn get_cake_by_uid(
-    req: HttpRequest,
+    _req: HttpRequest,
     conn: web::Data<Mutex<Connection>>,
-    auth_token: web::Data<String>,
     uid: web::Path<String>,
 ) -> impl Responder {
     // Check authentication
-    if check_auth(&ServiceRequest::from_request(req), &auth_token).is_err() {
-        return HttpResponse::Unauthorized().json(serde_json::json!({
-            "error": "Unauthorized access"
-        }));
-    }
 
     // Lock the database connection
     let conn = conn.lock().unwrap();
